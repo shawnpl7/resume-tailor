@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resume-tailor"
+version = "0.1.0"
+description = "A human-reviewed CrewAI workflow for tailoring a resume to a job description."
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai[google-genai]>=1.15,<2",
+    "pypdf>=5,<7",
+    "python-dotenv>=1.0,<2",
+]
+
+[project.scripts]
+resume-tailor = "resume_tailor.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+resume_tailor = ["config/*.yaml"]

@@ -1,0 +1,65 @@
+analyze_job:
+  description: >
+    Analyze the job description against the candidate's resume.
+
+    Job Description:
+    {job_description}
+
+    Candidate's Resume:
+    {resume}
+
+    Identify the role's key requirements, the matching evidence actually
+    present in the resume, and any gaps or uncertain qualifications. Do not
+    treat a requirement in the job description as evidence that the candidate
+    has that skill.
+  expected_output: >
+    A concise Markdown analysis with sections for key requirements, supported
+    matches, and gaps or uncertainties.
+  agent: resume_tailor
+  output_file: job_analysis.md
+
+tailor_resume:
+  description: >
+    Tailor the candidate's resume to the job description using the completed
+    job analysis and the original resume.
+
+    Job Description:
+    {job_description}
+
+    Original Resume:
+    {resume}
+
+    Reorder and rephrase only details supported by the original resume. Do not
+    add skills, employers, dates, metrics, credentials, or accomplishments
+    merely because they appear in the job description. Omit unsupported claims
+    rather than implying the candidate has a missing qualification.
+  expected_output: >
+    A complete, cleanly formatted Markdown resume tailored to the role and
+    limited to facts supported by the original resume.
+  agent: resume_tailor
+  context:
+    - analyze_job
+  output_file: tailored_resume.md
+
+write_cover_letter:
+  description: >
+    Write a concise, professional cover letter for the job using the
+    candidate's original resume and the completed job analysis.
+
+    Job Description:
+    {job_description}
+
+    Original Resume:
+    {resume}
+
+    Ground every claim in the resume. Do not invent names, dates, experience,
+    or achievements. Use a neutral greeting when no hiring manager name is
+    provided.
+  expected_output: >
+    A polished, role-specific cover letter in Markdown, based only on
+    information supported by the resume.
+  agent: resume_tailor
+  context:
+    - analyze_job
+    - tailor_resume
+  output_file: cover_letter.md
