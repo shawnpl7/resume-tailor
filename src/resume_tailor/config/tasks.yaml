@@ -8,13 +8,15 @@ analyze_job:
     Candidate's Resume:
     {resume}
 
-    Identify the role's key requirements, the matching evidence actually
-    present in the resume, and any gaps or uncertain qualifications. Do not
-    treat a requirement in the job description as evidence that the candidate
-    has that skill.
+    If no resume was provided, identify the role's key requirements and
+    technologies, then give a short preparation path. Do not infer anything
+    about the candidate. If a resume was provided, identify matching evidence
+    and gaps or uncertain qualifications. Do not treat a requirement in the
+    job description as evidence that the candidate has that skill.
   expected_output: >
-    A concise Markdown analysis with sections for key requirements, supported
-    matches, and gaps or uncertainties.
+    A concise Markdown analysis. With a resume, include key requirements,
+    supported matches, and gaps or uncertainties. Without a resume, include
+    the job summary, key technologies, and a short preparation path.
   agent: resume_tailor
   output_file: job_analysis.md
 

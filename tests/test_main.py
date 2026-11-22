@@ -4,7 +4,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
-from resume_tailor.main import read_input
+from resume_tailor.main import read_input, read_input_content
 
 
 class ReadInputTests(unittest.TestCase):
@@ -32,7 +32,12 @@ class ReadInputTests(unittest.TestCase):
                 read_input(path, "Resume"),
                 "First page\nSecond page",
             )
-        pdf_reader.assert_called_once_with(path)
+        pdf_reader.assert_called_once()
+        self.assertEqual(pdf_reader.call_args.args[0].read(), b"PDF")
+
+    def test_rejects_unsupported_input_type(self) -> None:
+        with self.assertRaisesRegex(ValueError, "PDF, TXT, or Markdown"):
+            read_input_content("resume.docx", b"resume", "Resume")
 
     @patch("resume_tailor.main.PdfReader")
     def test_rejects_encrypted_pdf(self, pdf_reader: MagicMock) -> None:

@@ -9,8 +9,12 @@ description = "A human-reviewed CrewAI workflow for tailoring a resume to a job 
 requires-python = ">=3.10,<3.14"
 dependencies = [
     "crewai[google-genai]>=1.15,<2",
+    "fastapi>=0.115,<1",
     "pypdf>=5,<7",
     "python-dotenv>=1.0,<2",
+    "python-multipart>=0.0.20,<1",
+    "pyyaml>=6,<7",
+    "uvicorn[standard]>=0.34,<1",
 ]
 
 [project.scripts]

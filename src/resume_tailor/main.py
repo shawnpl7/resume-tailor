@@ -1,4 +1,5 @@
 import argparse
+from io import BytesIO, TextIOWrapper
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -10,25 +11,33 @@ from resume_tailor.crew import build_crew
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
-def read_input(path: Path, label: str) -> str:
-    if not path.is_file():
-        raise FileNotFoundError(f"{label} file does not exist: {path}")
-    if path.suffix.lower() == ".pdf":
-        reader = PdfReader(path)
+def read_input_content(filename: str, content: bytes, label: str) -> str:
+    suffix = Path(filename).suffix.lower()
+    if suffix not in {".pdf", ".txt", ".md"}:
+        raise ValueError(f"{label} must be a PDF, TXT, or Markdown file.")
+
+    if suffix == ".pdf":
+        reader = PdfReader(BytesIO(content))
         if reader.is_encrypted:
-            raise ValueError(f"{label} PDF is encrypted: {path}")
+            raise ValueError(f"{label} PDF is encrypted.")
         text = "\n".join(page.extract_text() or "" for page in reader.pages).strip()
         if not text:
             raise ValueError(
-                f"{label} PDF contains no extractable text: {path}. "
+                f"{label} PDF contains no extractable text. "
                 "Scanned PDFs need OCR before they can be used."
             )
-        return text
-
-    text = path.read_text(encoding="utf-8").strip()
+    else:
+        with TextIOWrapper(BytesIO(content), encoding="utf-8") as text_stream:
+            text = text_stream.read().strip()
     if not text:
-        raise ValueError(f"{label} file is empty: {path}")
+        raise ValueError(f"{label} file is empty.")
     return text
+
+
+def read_input(path: Path, label: str) -> str:
+    if not path.is_file():
+        raise FileNotFoundError(f"{label} file does not exist: {path}")
+    return read_input_content(path.name, path.read_bytes(), label)
 
 
 def parse_args() -> argparse.Namespace:
